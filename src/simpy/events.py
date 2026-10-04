@@ -394,6 +394,8 @@ class Process(Event):
                 self.env.schedule(self)
                 break
 
+            event = self.env._validate_process_event(event)
+
             # Process returned another event to wait upon.
             try:
                 # Be optimistic and blindly access the callbacks attribute.

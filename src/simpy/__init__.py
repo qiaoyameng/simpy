@@ -12,6 +12,9 @@ from pkgutil import extend_path
 
 from simpy.core import Environment
 from simpy.rt import RealtimeEnvironment
+from simpy.coordination import (
+    Coordinator, ConservativeCoordinator, Connection, DelayedConnection,
+    Message)
 from simpy.exceptions import SimPyException, Interrupt, StopProcess
 from simpy.events import Event, Timeout, Process, AllOf, AnyOf
 from simpy.resources.resource import (
@@ -36,6 +39,10 @@ def compile_toc(entries, section_marker='='):
 toc = (
     ('Environments', (
         Environment, RealtimeEnvironment,
+    )),
+    ('Coordination', (
+        Coordinator, ConservativeCoordinator, Connection,
+        DelayedConnection, Message,
     )),
     ('Events', (
         Event, Timeout, Process, AllOf, AnyOf, Interrupt,

@@ -83,6 +83,14 @@ class BaseEnvironment(object):
         """The currently active process of the environment."""
         raise NotImplementedError(self)
 
+    def _validate_process_event(self, event):
+        """Validate an event yielded by a process.
+
+        Coordination environments use this hook to reject events that belong
+        to another environment.
+        """
+        return event
+
     def schedule(self, event, priority=NORMAL, delay=0):
         """Schedule an *event* with a given *priority* and a *delay*.
 
