@@ -77,6 +77,18 @@ Stores --- ``simpy.resources.store``
    :members:
 
 
+Batch resources --- ``simpy.resources.batch``
+=============================================
+
+.. automodule:: simpy.resources.batch
+
+.. autoclass:: BatchResource
+   :members:
+
+.. autoclass:: BatchRequest
+   :members:
+
+
 Base classes --- ``simpy.resources.base``
 =========================================
 
