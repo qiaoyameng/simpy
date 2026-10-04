@@ -255,6 +255,172 @@ def test_get_users(env):
 
 
 #
+# Tests for ProcessorSharingResource
+#
+
+
+def test_processor_sharing_weighted_three_segments(env):
+    res = simpy.ProcessorSharingResource(env, capacity=6)
+    completions = []
+
+    def task(name, work, weight):
+        req = res.request(work, weight)
+        yield req
+        completions.append((env.now, name, req.service))
+
+    def add(name, at, work, weight):
+        yield env.timeout(at)
+        env.process(task(name, work, weight))
+
+    env.process(add('a', 0, 12, 1))
+    env.process(add('b', 0, 12, 1))
+    env.process(add('c', 2, 24, 2))
+    env.process(add('d', 2, 12, 1))
+
+    env.run()
+
+    assert completions == [
+        (7, 'a', 12),
+        (7, 'b', 12),
+        (10, 'c', 24),
+        (10, 'd', 12),
+    ]
+
+
+def test_processor_sharing_zero_capacity_pauses_and_resumes(env):
+    res = simpy.ProcessorSharingResource(env, capacity=1)
+    completion = []
+
+    def task():
+        req = res.request(work=5)
+        yield req
+        completion.append((env.now, req.service))
+
+    env.process(task())
+    res.set_capacity(0, at=1)
+    res.set_capacity(1, at=4)
+    env.run()
+
+    assert completion == [(8, 5)]
+    assert res.count == 0
+
+
+def test_processor_sharing_replaces_future_capacity_change(env):
+    res = simpy.ProcessorSharingResource(env, capacity=1)
+    completion = []
+
+    def task():
+        yield res.request(work=6)
+        completion.append(env.now)
+
+    env.process(task())
+    res.set_capacity(0, at=1)
+    res.set_capacity(1, at=2)
+    res.set_capacity(1, at=3)
+    env.run()
+
+    assert completion == [7]
+
+
+def test_processor_sharing_cancel_updates_other_service(env):
+    res = simpy.ProcessorSharingResource(env, capacity=2)
+    services = {}
+    request_ref = {}
+
+    def task(name, work):
+        request_ref[name] = req = res.request(work)
+        try:
+            yield req
+            services[name] = req.service
+        except simpy.ProcessorSharingCanceled as error:
+            services[name] = error.request.service
+
+    def cancel_b():
+        yield env.timeout(2)
+        res.cancel(request_ref['b'])
+
+    env.process(task('a', 8))
+    b = env.process(task('b', 10))
+    env.process(cancel_b())
+    env.run()
+
+    assert b.ok is True
+    assert services == {'b': 2.0, 'a': 8.0}
+    assert env.now == 5
+
+
+def test_processor_sharing_context_manager_cancels(env):
+    res = simpy.ProcessorSharingResource(env, capacity=1)
+    services = {}
+    requests = {}
+
+    def cancel_request():
+        yield env.timeout(2)
+        res.cancel(requests['canceled'])
+
+    def run_canceled_task():
+        with res.request(work=5) as request:
+            requests['canceled'] = request
+            try:
+                yield request
+            except simpy.ProcessorSharingCanceled:
+                services['canceled'] = request.service
+
+    def survivor():
+        req = res.request(work=4)
+        yield req
+        services['survivor'] = req.service
+
+    env.process(run_canceled_task())
+    env.process(survivor())
+    env.process(cancel_request())
+    env.run()
+
+    assert services['canceled'] == 1.0
+    assert services['survivor'] == 4.0
+
+
+def test_processor_sharing_stale_completion_is_removed(env):
+    res = simpy.ProcessorSharingResource(env, capacity=1)
+    requests = {}
+    completion_times = []
+
+    def complete_task(name, request):
+        yield request
+        completion_times.append((name, env.now))
+
+    def task(name, work, weight=1):
+        req = res.request(work, weight)
+        requests[name] = req
+        env.process(complete_task(name, req))
+        return req
+
+    task('a', 30)
+
+    def add_b():
+        yield env.timeout(1)
+        requests['b'] = task('b', 8, 2)
+
+    env.process(add_b())
+    res.set_capacity(1, at=12)
+    env.run(until=12.1)
+
+    assert requests['a'].remaining == pytest.approx(30 - 1 - 11 / 3)
+    assert requests['b'].remaining == pytest.approx(8 - 22 / 3)
+
+    env.run()
+    assert completion_times == [('b', 13), ('a', 38)]
+
+
+def test_processor_sharing_validates_arguments(env):
+    res = simpy.ProcessorSharingResource(env, capacity=1)
+
+    pytest.raises(ValueError, simpy.ProcessorSharingResource, env, -1)
+    pytest.raises(ValueError, res.request, 0)
+    pytest.raises(ValueError, res.request, 1, 0)
+
+
+#
 # Tests for PreemptiveResource
 #
 def test_preemptive_resource(env):

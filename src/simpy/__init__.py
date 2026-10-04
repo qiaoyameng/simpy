@@ -16,6 +16,8 @@ from simpy.exceptions import SimPyException, Interrupt, StopProcess
 from simpy.events import Event, Timeout, Process, AllOf, AnyOf
 from simpy.resources.resource import (
     Resource, PriorityResource, PreemptiveResource)
+from simpy.resources.processor import (
+    ProcessorSharingResource, ProcessorSharingCanceled)
 from simpy.resources.container import Container
 from simpy.resources.store import (
     Store, PriorityItem, PriorityStore, FilterStore)
@@ -41,7 +43,8 @@ toc = (
         Event, Timeout, Process, AllOf, AnyOf, Interrupt,
     )),
     ('Resources', (
-        Resource, PriorityResource, PreemptiveResource, Container, Store,
+        Resource, PriorityResource, PreemptiveResource,
+        ProcessorSharingResource, ProcessorSharingCanceled, Container, Store,
         PriorityItem, PriorityStore, FilterStore,
     )),
     ('Exceptions', (
