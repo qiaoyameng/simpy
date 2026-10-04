@@ -35,6 +35,33 @@ Resources --- ``simpy.resources.resource``
    :members:
 
 
+Capacity calendars --- ``simpy.resources.calendar``
+==================================================
+
+.. automodule:: simpy.resources.calendar
+
+.. autoclass:: CalendarResource
+   :members:
+
+.. autoclass:: CapacityCalendar
+   :members:
+
+.. autoclass:: CapacityCalendarEntry
+   :members:
+
+.. autoclass:: CapacityShrinkPolicy
+   :members:
+
+.. autoclass:: CapacityChange
+   :members:
+
+.. autoclass:: ResourceEvent
+   :members:
+
+.. autoclass:: CalendarPreempted
+   :members:
+
+
 Containers --- ``simpy.resources.container``
 ============================================
 

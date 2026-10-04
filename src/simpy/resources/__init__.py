@@ -7,6 +7,7 @@ processes or to model congestion points:
 .. autosummary::
 
    resource
+   calendar
    container
    store
 

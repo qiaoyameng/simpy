@@ -318,6 +318,40 @@ valuing preemption over priorities, you can subclass *PreemptiveResource* and
 override the default behaviour.
 
 
+Capacity calendars
+------------------
+
+A :class:`~simpy.CalendarResource` changes its number of slots according to a
+simulation-time :class:`~simpy.CapacityCalendar`. Calendar intervals are
+half-open: ``CapacityCalendarEntry(start, end, capacity)`` is active at
+``start`` and no longer active at ``end``. Intervals may touch at a boundary
+but must not overlap.
+
+.. code-block:: python
+
+   calendar = simpy.CapacityCalendar([
+       simpy.CapacityCalendarEntry(8, 16, 10),
+       simpy.CapacityCalendarEntry(16, 24, 5),
+   ])
+   workers = simpy.CalendarResource(
+       env, capacity=10, calendar=calendar,
+       shrink_policy=simpy.CapacityShrinkPolicy.GENTLE)
+
+With :attr:`~simpy.CapacityShrinkPolicy.GENTLE`, active users keep their slots
+while the resource may temporarily have a deficit; no new request is granted
+until enough users finish. With
+:attr:`~simpy.CapacityShrinkPolicy.IMMEDIATE`, the lowest-priority users are
+preempted immediately. Users with the same priority are preempted in reverse
+request order. Their interrupt cause is a
+:class:`~simpy.CalendarPreempted` object that identifies the calendar entry and
+capacity change.
+
+Calendar changes are scheduled as simulation events, never with wall-clock
+timer. At the same simulation time, a capacity change is observed before task
+completions and new requests. ``resource.events`` records capacity changes,
+grants, releases, and calendar preemptions for deterministic verification.
+
+
 .. _res_type_container:
 
 Containers
