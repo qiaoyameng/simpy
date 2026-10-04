@@ -11,6 +11,7 @@ The following tables list all of the available components in this module.
 from pkgutil import extend_path
 
 from simpy.core import Environment
+from simpy.hybrid import HybridEnvironment
 from simpy.rt import RealtimeEnvironment
 from simpy.exceptions import SimPyException, Interrupt, StopProcess
 from simpy.events import Event, Timeout, Process, AllOf, AnyOf
@@ -35,7 +36,7 @@ def compile_toc(entries, section_marker='='):
 
 toc = (
     ('Environments', (
-        Environment, RealtimeEnvironment,
+        Environment, RealtimeEnvironment, HybridEnvironment,
     )),
     ('Events', (
         Event, Timeout, Process, AllOf, AnyOf, Interrupt,
