@@ -1,12 +1,13 @@
 """
-SimPy implements three types of resources that can be used to synchronize
-processes or to model congestion points:
+SimPy implements shared resources that can be used to synchronize processes
+or to model congestion points, as well as utilities for monitoring them:
 
 .. currentmodule:: simpy.resources
 
 .. autosummary::
 
    resource
+   monitor
    container
    store
 

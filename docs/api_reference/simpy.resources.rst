@@ -35,6 +35,24 @@ Resources --- ``simpy.resources.resource``
    :members:
 
 
+Monitoring --- ``simpy.resources.monitor``
+==========================================
+
+.. automodule:: simpy.resources.monitor
+
+.. autoclass:: ResourceObserver
+   :members:
+
+.. autoclass:: ResourceTimeAverage
+   :members:
+
+.. autoclass:: ResourceArea
+   :members:
+
+.. autoclass:: ResourceBatch
+   :members:
+
+
 Containers --- ``simpy.resources.container``
 ============================================
 

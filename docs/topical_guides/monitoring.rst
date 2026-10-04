@@ -185,6 +185,37 @@ a resource that get called just before or after a *get / request* or a *put
 The example above is a very generic but also very flexible way to monitor all
 aspects of all kinds of resources.
 
+For a :class:`~simpy.Resource`, :class:`~simpy.ResourceObserver` can calculate
+time-weighted averages without adding sampling timeouts. It integrates queue
+length and occupancy over the duration for which each value was constant:
+
+.. code-block:: python
+
+   import simpy
+
+   env = simpy.Environment()
+   resource = simpy.Resource(env, capacity=1)
+   observer = simpy.ResourceObserver(resource)
+
+   def use_resource(request, duration):
+       yield request
+       yield env.timeout(duration)
+       resource.release(request)
+
+   requests = [resource.request() for _ in range(3)]
+   for index, request in enumerate(requests):
+       env.process(use_resource(request, index + 1))
+
+   env.run(until=3)
+   print(observer.time_average())
+
+The observer can be attached in the middle of a run, and statistics can be
+read for a window that starts or ends between events. Pass ``start`` to discard
+a warm-up period. Fixed simulation-time batches are available with
+:meth:`~simpy.ResourceObserver.batch_time_averages`; a final shorter batch has
+its ``complete`` flag set to ``False``. These batch averages are observations
+only and are not confidence intervals.
+
 The other extreme would be to fit the monitoring to exactly one use case.
 Imagine, for example, you only want to know how many processes are waiting for
 a ``Resource`` at a time:
