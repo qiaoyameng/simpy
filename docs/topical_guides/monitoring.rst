@@ -228,6 +228,54 @@ flexibility: We only monitor ``Resource`` typed resources, we only collect data
 length.  At the same time, you need less than half of the code.
 
 
+.. _resource-statistics:
+
+Time-weighted resource statistics
+---------------------------------
+
+Averaging the samples captured at every state change is usually wrong: short
+and long constant intervals would contribute equally even though the process
+spends different amounts of time in each state.  The correct time mean is
+
+.. math::
+
+   \bar{x} = \frac{1}{t_1-t_0} \int_{t_0}^{t_1} x(t)\,\mathrm{d}t.
+
+:class:`simpy.ResourceStats` integrates the piecewise constant queue length
+and resource usage.  The observer is passive and does not schedule sampling
+timeouts or any other model event.  Reading a statistic only extends the
+current constant interval arithmetically; it does not advance the simulation
+clock.
+
+.. code-block:: python
+
+   import simpy
+
+   env = simpy.Environment()
+   resource = simpy.Resource(env, capacity=2)
+   stats = simpy.ResourceStats(
+       resource, start=10, end=50, batch_size=10)
+
+   # ... run the model ...
+
+   total = stats.result()
+   print(total.mean_queue_length, total.mean_usage,
+         total.mean_utilization)
+
+   for batch in stats.batch_means():
+       print(batch.start, batch.end, batch.mean_usage, batch.complete)
+
+The observation window may start after a warm-up period and may end between
+two model events.  If the end of the window lies inside a constant interval,
+only the area before that point is included.  Each fixed-length batch covers
+an interval based on simulation time.  A final interval shorter than
+``batch_size`` is returned with ``complete=False`` (equivalently,
+``partial=True``).
+
+The batch values are descriptive batch means.  SimPy does not derive
+variances or confidence intervals from them.
+
+
 .. _event-tracing:
 
 Event tracing

@@ -19,6 +19,7 @@ from simpy.resources.resource import (
 from simpy.resources.container import Container
 from simpy.resources.store import (
     Store, PriorityItem, PriorityStore, FilterStore)
+from simpy.stats import ResourceStats, ResourceObserver
 
 
 def compile_toc(entries, section_marker='='):
@@ -43,6 +44,9 @@ toc = (
     ('Resources', (
         Resource, PriorityResource, PreemptiveResource, Container, Store,
         PriorityItem, PriorityStore, FilterStore,
+    )),
+    ('Statistics', (
+        ResourceStats, ResourceObserver,
     )),
     ('Exceptions', (
         SimPyException, Interrupt, StopProcess,
