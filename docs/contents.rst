@@ -14,6 +14,7 @@ Documentation for SimPy
    index
    simpy_intro/index
    topical_guides/index
+   cosim/index
    examples/index
    api_reference/index
    about/index
