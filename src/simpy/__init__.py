@@ -19,6 +19,10 @@ from simpy.resources.resource import (
 from simpy.resources.container import Container
 from simpy.resources.store import (
     Store, PriorityItem, PriorityStore, FilterStore)
+from simpy.production import (
+    Part, OwnershipLedger, HandoffCanceled, HandoffCommitted,
+    ZeroCapacityHandoff, Workstation, WorkstationInterrupted,
+    WorkstationFailure)
 
 
 def compile_toc(entries, section_marker='='):
@@ -43,6 +47,11 @@ toc = (
     ('Resources', (
         Resource, PriorityResource, PreemptiveResource, Container, Store,
         PriorityItem, PriorityStore, FilterStore,
+    )),
+    ('Production line', (
+        Part, OwnershipLedger, HandoffCanceled, HandoffCommitted,
+        ZeroCapacityHandoff, Workstation, WorkstationInterrupted,
+        WorkstationFailure,
     )),
     ('Exceptions', (
         SimPyException, Interrupt, StopProcess,
