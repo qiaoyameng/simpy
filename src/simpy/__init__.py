@@ -19,6 +19,10 @@ from simpy.resources.resource import (
 from simpy.resources.container import Container
 from simpy.resources.store import (
     Store, PriorityItem, PriorityStore, FilterStore)
+from simpy.workstation import (
+    HandoverPoint, Part, Workstation, WorkRecord, WorkstationError,
+    TransferCancelled, TransferCommitted, WorkstationHalted,
+    WAITING, PROCESSING, WAITING_HANDOVER, BLOCKED, audit_locations)
 
 
 def compile_toc(entries, section_marker='='):
@@ -46,6 +50,11 @@ toc = (
     )),
     ('Exceptions', (
         SimPyException, Interrupt, StopProcess,
+    )),
+    ('Workstations', (
+        HandoverPoint, Part, Workstation, WorkRecord, WorkstationError,
+        TransferCancelled, TransferCommitted, WorkstationHalted,
+        audit_locations,
     )),
 )
 
