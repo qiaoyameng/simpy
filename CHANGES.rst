@@ -1,6 +1,21 @@
 Changelog for SimPy
 ===================
 
+unreleased
+----------
+
+- [NEW] Add ``simpy.phased.PhasedEnvironment``, an optional staged environment
+  for digital control models. It separates physical time from micro step
+  rounds and processes each round in the INPUT, STATE and OUTPUT phases.
+- [NEW] Events targeting an earlier or the current phase are deferred to the
+  next micro step (FIFO within a phase); a per-physical-time
+  ``microstep_limit`` raises ``simpy.phased.MicrostepLimit`` and reports the
+  events still cycling instead of silently skipping them.
+- [CHANGE] ``Event.succeed/trigger/fail``, ``Timeout`` and
+  ``Environment.schedule`` gained an optional ``phase`` keyword. It is ignored
+  by the default environments, whose queueing rules are unchanged.
+
+
 3.0.11 - 2018-07-13
 -------------------
 

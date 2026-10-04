@@ -83,11 +83,15 @@ class BaseEnvironment(object):
         """The currently active process of the environment."""
         raise NotImplementedError(self)
 
-    def schedule(self, event, priority=NORMAL, delay=0):
+    def schedule(self, event, priority=NORMAL, delay=0, phase=None):
         """Schedule an *event* with a given *priority* and a *delay*.
 
         There are two default priority values, :data:`~simpy.events.URGENT` and
         :data:`~simpy.events.NORMAL`.
+
+        The optional *phase* is only honored by the staged
+        :class:`~simpy.phased.PhasedEnvironment`.  The normal environments
+        ignore it, so passing it does not change their queueing behaviour.
 
         """
         raise NotImplementedError(self)
@@ -191,8 +195,14 @@ class Environment(BaseEnvironment):
     all_of = BoundClass(AllOf)
     any_of = BoundClass(AnyOf)
 
-    def schedule(self, event, priority=NORMAL, delay=0):
-        """Schedule an *event* with a given *priority* and a *delay*."""
+    def schedule(self, event, priority=NORMAL, delay=0, phase=None):
+        """Schedule an *event* with a given *priority* and a *delay*.
+
+        The optional *phase* is ignored by this environment.  It only has an
+        effect when using the staged
+        :class:`~simpy.phased.PhasedEnvironment`.
+
+        """
         heappush(self._queue,
                  (self._now + delay, priority, next(self._eid), event))
 

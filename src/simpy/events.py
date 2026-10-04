@@ -132,21 +132,29 @@ class Event(object):
             raise AttributeError('Value of %s is not yet available' % self)
         return self._value
 
-    def trigger(self, event):
+    def trigger(self, event, phase=None):
         """Trigger the event with the state and value of the provided *event*.
         Return *self* (this event instance).
 
         This method can be used directly as a callback function to trigger
         chain reactions.
 
+        The optional *phase* is only used by the staged
+        :class:`~simpy.phased.PhasedEnvironment`; the normal environments
+        ignore it.
+
         """
         self._ok = event._ok
         self._value = event._value
-        self.env.schedule(self)
+        self.env.schedule(self, phase=phase)
 
-    def succeed(self, value=None):
+    def succeed(self, value=None, phase=None):
         """Set the event's value, mark it as successful and schedule it for
         processing by the environment. Returns the event instance.
+
+        The optional *phase* schedules the event for that stage when using the
+        staged :class:`~simpy.phased.PhasedEnvironment`.  The normal
+        environments ignore it.
 
         Raises :exc:`RuntimeError` if this event has already been triggerd.
 
@@ -156,12 +164,16 @@ class Event(object):
 
         self._ok = True
         self._value = value
-        self.env.schedule(self)
+        self.env.schedule(self, phase=phase)
         return self
 
-    def fail(self, exception):
+    def fail(self, exception, phase=None):
         """Set *exception* as the events value, mark it as failed and schedule
         it for processing by the environment. Returns the event instance.
+
+        The optional *phase* is only used by the staged
+        :class:`~simpy.phased.PhasedEnvironment`; the normal environments
+        ignore it.
 
         Raises :exc:`ValueError` if *exception* is not an :exc:`Exception`.
 
@@ -174,7 +186,7 @@ class Event(object):
             raise ValueError('%s is not an exception.' % exception)
         self._ok = False
         self._value = exception
-        self.env.schedule(self)
+        self.env.schedule(self, phase=phase)
         return self
 
     def __and__(self, other):
@@ -196,7 +208,7 @@ class Timeout(Event):
     This event is automatically triggered when it is created.
 
     """
-    def __init__(self, env, delay, value=None):
+    def __init__(self, env, delay, value=None, phase=None):
         if delay < 0:
             raise ValueError('Negative delay %s' % delay)
         # NOTE: The following initialization code is inlined from
@@ -206,7 +218,9 @@ class Timeout(Event):
         self._value = value
         self._delay = delay
         self._ok = True
-        env.schedule(self, NORMAL, delay)
+        # The *phase* is only used by the staged
+        # simpy.phased.PhasedEnvironment; the normal environments ignore it.
+        env.schedule(self, NORMAL, delay, phase=phase)
 
     def _desc(self):
         """Return a string *Timeout(delay[, value=value])*."""
