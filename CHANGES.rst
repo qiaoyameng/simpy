@@ -1,6 +1,16 @@
 Changelog for SimPy
 ===================
 
+Unreleased
+----------
+
+- [NEW] Add ``PerishableStore`` resource: FEFO (first-expired, first-out)
+  inventory for batches with individual expiration times.  Get requests are
+  fulfilled atomically (possibly split over multiple batches) and return the
+  breakdown of the batches used.  Batches perish automatically; expiration
+  at a time *t* is processed before get requests fulfilled at *t*.
+  Inbound, outbound and scrapped totals are tracked for conservation checks.
+
 3.0.11 - 2018-07-13
 -------------------
 

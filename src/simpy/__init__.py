@@ -19,6 +19,7 @@ from simpy.resources.resource import (
 from simpy.resources.container import Container
 from simpy.resources.store import (
     Store, PriorityItem, PriorityStore, FilterStore)
+from simpy.resources.perishable import Batch, PerishableStore
 
 
 def compile_toc(entries, section_marker='='):
@@ -42,7 +43,7 @@ toc = (
     )),
     ('Resources', (
         Resource, PriorityResource, PreemptiveResource, Container, Store,
-        PriorityItem, PriorityStore, FilterStore,
+        PriorityItem, PriorityStore, FilterStore, Batch, PerishableStore,
     )),
     ('Exceptions', (
         SimPyException, Interrupt, StopProcess,

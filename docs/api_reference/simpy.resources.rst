@@ -77,6 +77,24 @@ Stores --- ``simpy.resources.store``
    :members:
 
 
+Perishable stores --- ``simpy.resources.perishable``
+====================================================
+
+.. automodule:: simpy.resources.perishable
+
+.. autoclass:: PerishableStore
+   :members:
+
+.. autoclass:: Batch
+   :members:
+
+.. autoclass:: PerishablePut
+   :members:
+
+.. autoclass:: PerishableGet
+   :members:
+
+
 Base classes --- ``simpy.resources.base``
 =========================================
 
