@@ -1,6 +1,14 @@
 Changelog for SimPy
 ===================
 
+3.0.12 - XXXX-XX-XX
+-------------------
+
+- [NEW] Add ``CalendarResource`` and ``CapacityCalendar``: resources whose
+  capacity changes over simulation time according to a calendar of
+  half-open intervals, with graceful (drain) and immediate (preemptive)
+  shrink strategies.
+
 3.0.11 - 2018-07-13
 -------------------
 
