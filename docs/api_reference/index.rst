@@ -19,3 +19,4 @@ components.
    simpy.resources
    simpy.rt
    simpy.util
+   simpy.rng
