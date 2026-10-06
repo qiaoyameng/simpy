@@ -14,6 +14,7 @@ from simpy.core import Environment
 from simpy.rt import RealtimeEnvironment
 from simpy.exceptions import SimPyException, Interrupt, StopProcess
 from simpy.events import Event, Timeout, Process, AllOf, AnyOf
+from simpy.randomstreams import RandomStreamManager
 from simpy.resources.resource import (
     Resource, PriorityResource, PreemptiveResource)
 from simpy.resources.container import Container
@@ -39,6 +40,9 @@ toc = (
     )),
     ('Events', (
         Event, Timeout, Process, AllOf, AnyOf, Interrupt,
+    )),
+    ('Randomness', (
+        RandomStreamManager,
     )),
     ('Resources', (
         Resource, PriorityResource, PreemptiveResource, Container, Store,

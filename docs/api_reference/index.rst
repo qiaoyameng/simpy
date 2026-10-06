@@ -17,5 +17,6 @@ components.
    simpy.exceptions
    simpy.events
    simpy.resources
+   simpy.randomstreams
    simpy.rt
    simpy.util

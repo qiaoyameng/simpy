@@ -17,6 +17,7 @@ you are looking for.
    events
    process_interaction
    resources
+   random_streams
    real-time-simulations
    monitoring
    time_and_scheduling
